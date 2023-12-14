@@ -1,19 +1,20 @@
 ﻿using BlazorShop.Shared;
+using System.Net.Http.Json;
 
 namespace BlazorShop.Client.Services.CategoryService
 {
 	public class CategoryService : ICategoryService
 	{
-		public List<Category> Categories { get; set; } = new List<Category>();
+		private readonly HttpClient _http;
 
-		public void LoadCategories()
+		public List<Category> Categories { get; set; } = new List<Category>();
+        public CategoryService(HttpClient http)
+        {
+			_http = http;
+		}
+        public async Task LoadCategories()
 		{
-			Categories = new List<Category>
-			{
-				new Category { Id = 1, Name ="Movies" , Url="movies", Icon="FilePlay" },
-				new Category { Id = 2, Name ="Books" , Url="books", Icon="book" },
-				new Category { Id = 3, Name ="Aperature" , Url="aperature", Icon="aperture" }
-			};
+			Categories = await _http.GetFromJsonAsync<List<Category>>("api/Category");
 		}
 	}
 }
