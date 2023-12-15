@@ -6,5 +6,7 @@ namespace BlazorShop.Server.Services.CategoryService
 	{
 		Task<List<Category>> GetCategories();
 		Task<Category> GetCategoryByUrl(string categoryUrl);
-	}
+		Task<Category> SearchCategory(string searchText);
+
+    }
 }

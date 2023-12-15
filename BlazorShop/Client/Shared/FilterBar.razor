@@ -1,0 +1,40 @@
+﻿@inject ICategoryService CategoryService
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+@using Blazored.Typeahead
+<h3>Filter by criteria:</h3>
+<BlazoredTypeahead SearchMethod="@SearchProduct"
+                   TValue="Product"
+                   TItem="Product"
+                   Value="selectedProduct"
+                   ValueChanged="HandleSearch"
+                   ValueExpression="(()=>selectedProduct)"
+                   placeholder="Search category...">
+    <SelectedTemplate>
+        @context.Title
+    </SelectedTemplate>
+    <ResultTemplate>
+        @context.Title
+    </ResultTemplate>
+    <NotFoundTemplate>
+        Sorry, there is no such category!
+    </NotFoundTemplate>
+</BlazoredTypeahead>
+@code {
+    private Product selectedProduct;
+    private void HandleSearch(Product product)
+    {
+        if (product == null)
+        {
+            return;
+        }
+        selectedProduct = product;
+        var url = $"product/{selectedProduct.Id}";
+        NavigationManager.NavigateTo(url);
+    }
+    private async Task<IEnumerable<Product>> SearchProduct(string searchText)
+    {
+        var response = await ProductService.SearchProductByCategory(searchText);
+        return response;
+    }
+}

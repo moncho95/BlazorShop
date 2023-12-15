@@ -1,5 +1,6 @@
 ﻿using BlazorShop.Server.Services.CategoryService;
 using BlazorShop.Shared;
+using System.Xml.Linq;
 
 namespace BlazorShop.Server.Services.ProductService
 {
@@ -28,7 +29,19 @@ namespace BlazorShop.Server.Services.ProductService
 			return Products.Where(p => p.CategoryId == category.Id).ToList();
 		}
 
-		public List<Product> Products { get; set; } = new List<Product>()
+        public async Task<List<Product>> SearchProduct(string searchText)
+        {
+            List<Product> product = Products.Where(p => p.Title.ToLower() == searchText.ToLower() || p.Description.ToLower().Contains(searchText.ToLower())).ToList();
+            return product;
+        }
+        public async Task<List<Product>> SearchProductByCategory(string searchText)
+        {
+			var category = _ctegoryService.SearchCategory(searchText);
+            List<Product> product = Products.Where(p => p.CategoryId == category.Id).ToList();
+            return product;
+        }
+
+        public List<Product> Products { get; set; } = new List<Product>()
 		{
 			new Product
 				{

@@ -1,4 +1,5 @@
 ﻿using BlazorShop.Shared;
+using System.Xml.Linq;
 
 namespace BlazorShop.Server.Services.CategoryService
 {
@@ -20,5 +21,11 @@ namespace BlazorShop.Server.Services.CategoryService
 		{
 			return Categories.FirstOrDefault(c => c.Url.ToLower().Equals(categoryUrl.ToLower()));
 		}
-	}
+        public async Task<Category> SearchCategory(string searchText)
+        {
+            Category category = Categories.FirstOrDefault(p => p.Name.ToLower() == searchText.ToLower());
+			
+            return category;
+        }
+    }
 }

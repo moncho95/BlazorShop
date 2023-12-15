@@ -1,4 +1,7 @@
 ﻿@inject ICategoryService CategoryService
+@inject IProductService ProductService 
+@inject NavigationManager NavigationManager
+
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">BlazorShop</a>
@@ -7,6 +10,24 @@
         </button>
     </div>
 </div>
+
+<BlazoredTypeahead SearchMethod="@SearchProduct"
+                   TValue="Product"
+                   TItem="Product"
+                   Value="selectedProduct"
+                   ValueChanged="HandleSearch"
+                   ValueExpression="(()=>selectedProduct)"
+                   placeholder="Search...">
+    <SelectedTemplate>
+        @context.Title
+    </SelectedTemplate>
+    <ResultTemplate>
+        @context.Title
+    </ResultTemplate>
+    <NotFoundTemplate>
+        Sorry, there is no item with the searched name!
+    </NotFoundTemplate>
+</BlazoredTypeahead>
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
@@ -30,6 +51,7 @@
 </div>
 
 @code {
+    private Product selectedProduct;
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -42,4 +64,20 @@
     {
         await CategoryService.LoadCategories();
     }
+    private void HandleSearch(Product product)
+    {
+        if (product == null)
+        {
+            return;
+        }
+        selectedProduct = product;
+        var url = $"product/{selectedProduct.Id}";
+        NavigationManager.NavigateTo(url);
+    }
+    private async Task<IEnumerable<Product>> SearchProduct(string searchText)
+    {
+        var response = await ProductService.SearchProduct(searchText);
+        return response;
+    }
+  
 }
